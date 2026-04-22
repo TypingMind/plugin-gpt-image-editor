@@ -33,7 +33,8 @@
       "name": "model",
       "type": "enum",
       "label": "Model",
-      "values": ["gpt-image-1", "gpt-image-2"],
+      "values": ["gpt-image-1", "gpt-image-1.5", "gpt-image-2"],
+      "defaultValue": "gpt-image-2",
       "description": "Optional, default: \"gpt-image-2\""
     },
     {
