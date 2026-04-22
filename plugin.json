@@ -1,63 +1,58 @@
 {
-    "id": "gpt_image_editor",
-    "uuid": "8c66a60b-54a7-40c4-a373-930dcb88b920",
-    "emoji": "🖼️",
-    "title": "GPT Image Editor",
-    "createdAt": "2025-04-24T00:03:25.285Z",
-    "githubURL": "https://github.com/TypingMind/plugin-dall-e-3",
-    "openaiSpec": {
-        "name": "gpt_image_editor",
-        "parameters": {
-            "type": "object",
-            "required": [
-                "prompt"
-            ],
-            "properties": {
-                "prompt": {
-                    "type": "string",
-                    "description": "The description of the image to generate or to edit."
-                }
-            }
-        },
-        "description": "Generate a new image or edit an existing image as requested by the user."
-    },
-    "outputType": "cards",
-    "userSettings": [
-        {
-            "name": "openaikey",
-            "type": "password",
-            "label": "OpenAI API Key (Required)",
-            "required": true,
-            "description": "The images will be generated using this OpenAI API. Get your API key from https://platform.openai.com/account/api-keys",
-            "placeholder": "sk-******"
-        },
-        {
-            "name": "resolution",
-            "type": "enum",
-            "label": "Resolution",
-            "values": [
-                "auto",
-                "1024x1024",
-                "1536x1024",
-                "1024x1536"
-            ],
-            "description": "Optional, default: \"auto\""
-        },
-        {
-            "name": "quality",
-            "type": "enum",
-            "label": "Quality",
-            "values": [
-                "auto",
-                "high",
-                "medium",
-                "low"
-            ],
-            "description": "Optional, default: \"auto\""
+  "id": "gpt_image_editor",
+  "uuid": "8c66a60b-54a7-40c4-a373-930dcb88b920",
+  "emoji": "🖼️",
+  "title": "GPT Image Editor",
+  "createdAt": "2025-04-24T00:03:25.285Z",
+  "githubURL": "https://github.com/TypingMind/plugin-dall-e-3",
+  "openaiSpec": {
+    "name": "gpt_image_editor",
+    "parameters": {
+      "type": "object",
+      "required": ["prompt"],
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "The description of the image to generate or to edit."
         }
-    ],
-    "authenticationType": "AUTH_TYPE_NONE",
-    "implementationType": "javascript",
-    "dynamicContextEndpoints": [],
-    "permissions": ["read_user_message"]
+      }
+    },
+    "description": "Generate a new image or edit an existing image as requested by the user."
+  },
+  "outputType": "cards",
+  "userSettings": [
+    {
+      "name": "openaikey",
+      "type": "password",
+      "label": "OpenAI API Key (Required)",
+      "required": true,
+      "description": "The images will be generated using this OpenAI API. Get your API key from https://platform.openai.com/account/api-keys",
+      "placeholder": "sk-******"
+    },
+    {
+      "name": "model",
+      "type": "enum",
+      "label": "Model",
+      "values": ["gpt-image-1", "gpt-image-2"],
+      "description": "Optional, default: \"gpt-image-2\""
+    },
+    {
+      "name": "resolution",
+      "type": "enum",
+      "label": "Resolution",
+      "values": ["auto", "1024x1024", "1536x1024", "1024x1536"],
+      "description": "Optional, default: \"auto\""
+    },
+    {
+      "name": "quality",
+      "type": "enum",
+      "label": "Quality",
+      "values": ["auto", "high", "medium", "low"],
+      "description": "Optional, default: \"auto\""
+    }
+  ],
+  "authenticationType": "AUTH_TYPE_NONE",
+  "implementationType": "javascript",
+  "dynamicContextEndpoints": [],
+  "permissions": ["read_user_message"]
 }

@@ -4,13 +4,14 @@ async function gpt_image_editor(params, userSettings, authorizedResources) {
   const quality = userSettings.quality || 'auto';
   const resolution = userSettings.resolution || 'auto';
   const background = userSettings.background || 'auto';
+  const model = userSettings.model || 'gpt-image-2';
 
   if (!openaikey) {
     throw new Error(
-      'No OpenAI key provided to the DALL-3 plugin. Please enter your OpenAI key in the plugin settings separately and try again.'
+      'No OpenAI key provided to the DALL-3 plugin. Please enter your OpenAI key in the plugin settings separately and try again.',
     );
   }
-  
+
   let resultBase64;
 
   let attachedImages = (authorizedResources?.userMessage?.attachments || [])
@@ -20,8 +21,7 @@ async function gpt_image_editor(params, userSettings, authorizedResources) {
       name: c.name,
     }));
 
-  const lastToolCallCards =
-    authorizedResources?.previousRunOutput?.cards;
+  const lastToolCallCards = authorizedResources?.previousRunOutput?.cards;
 
   if (!attachedImages.length && Array.isArray(lastToolCallCards)) {
     attachedImages = lastToolCallCards
@@ -36,7 +36,7 @@ async function gpt_image_editor(params, userSettings, authorizedResources) {
 
   if (mode === 'create') {
     const body = {
-      model: 'gpt-image-1',
+      model: model,
       prompt: prompt,
       n: 1,
       size: resolution,
@@ -56,7 +56,7 @@ async function gpt_image_editor(params, userSettings, authorizedResources) {
 
     let response = await fetch(
       'https://api.openai.com/v1/images/generations',
-      requestOptions
+      requestOptions,
     );
     if (response.status === 401) {
       throw new Error('Invalid OpenAI API Key. Please check your settings.');
@@ -81,13 +81,13 @@ async function gpt_image_editor(params, userSettings, authorizedResources) {
         const response = await fetch(url);
         const blob = await response.blob();
         return { blob, name };
-      })
+      }),
     );
 
     const formData = new FormData();
 
     // Model and prompt are simple
-    formData.append('model', 'gpt-image-1');
+    formData.append('model', model);
     formData.append('prompt', prompt);
     formData.append('n', 1);
     formData.append('size', resolution);
