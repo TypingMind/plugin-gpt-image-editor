@@ -3,6 +3,7 @@
   "uuid": "8c66a60b-54a7-40c4-a373-930dcb88b920",
   "emoji": "🖼️",
   "title": "GPT Image Editor",
+  "iconURL": "https://custom.typingmind.com/assets/plugins/gpt-image-editor.webp",
   "createdAt": "2025-04-24T00:03:25.285Z",
   "githubURL": "https://github.com/TypingMind/plugin-dall-e-3",
   "openaiSpec": {
