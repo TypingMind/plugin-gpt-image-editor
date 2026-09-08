@@ -21,6 +21,7 @@ async function gpt_image_editor(params, userSettings, authorizedResources) {
       name: c.name,
     }));
 
+  const hasUserAttachments = attachedImages.length > 0;
   const lastToolCallCards = authorizedResources?.previousRunOutput?.cards;
 
   if (!attachedImages.length && Array.isArray(lastToolCallCards)) {
@@ -71,19 +72,6 @@ async function gpt_image_editor(params, userSettings, authorizedResources) {
 
     resultBase64 = data.data[0].b64_json;
   } else if (mode === 'edit') {
-    const imagesAsBlobs = await Promise.all(
-      attachedImages.map(async ({ url, name }) => {
-        if (url.startsWith('data:image/')) {
-          const blob = await fetch(url).then((res) => res.blob());
-          return { blob, name };
-        }
-
-        const response = await fetch(url);
-        const blob = await response.blob();
-        return { blob, name };
-      }),
-    );
-
     const formData = new FormData();
 
     // Model and prompt are simple
@@ -96,7 +84,11 @@ async function gpt_image_editor(params, userSettings, authorizedResources) {
     formData.append('background', background);
 
     // Load images (from URLs) and append as Blobs
-    for (const { blob, name } of imagesAsBlobs) {
+    for (const image of attachedImages) {
+      const { blob, name } = await loadImageForEdit({
+        ...image,
+        normalize: hasUserAttachments,
+      });
       formData.append('image[]', blob, name);
     }
 
@@ -134,4 +126,68 @@ async function gpt_image_editor(params, userSettings, authorizedResources) {
       },
     ],
   };
+}
+
+async function loadImageForEdit({ url, name, normalize }) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to load image: ${response.status}`);
+  }
+
+  const source = await response.blob();
+  if (!normalize) return { blob: source, name };
+
+  const image = new Image();
+  const canvas = document.createElement('canvas');
+  const imageUrl = URL.createObjectURL(source);
+  try {
+    image.src = imageUrl;
+    await image.decode();
+
+    // Bound both canvas edges before allocating pixels for large photos (iOS).
+    const initialScale = Math.min(
+      1,
+      4096 / Math.max(image.naturalWidth, image.naturalHeight),
+    );
+    canvas.width = Math.max(1, Math.floor(image.naturalWidth * initialScale));
+    canvas.height = Math.max(1, Math.floor(image.naturalHeight * initialScale));
+    // Re-encode sRGB pixels instead of forwarding source profiles and HDR gain maps.
+    const context = canvas.getContext('2d', {
+      colorSpace: 'srgb',
+      colorType: 'unorm8',
+    });
+    if (!context) {
+      throw new Error('Unable to prepare image: canvas is unavailable.');
+    }
+    // JPEG is opaque; keep PNG for other inputs so transparency is preserved.
+    const type = source.type === 'image/jpeg' ? 'image/jpeg' : 'image/png';
+    const extension = type === 'image/jpeg' ? '.jpg' : '.png';
+    const maxBytes = 50_000_000;
+    while (true) {
+      context.imageSmoothingQuality = 'high';
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, type, 0.92),
+      );
+      if (!blob) {
+        throw new Error('Unable to encode image.');
+      }
+      if (blob.size < maxBytes) {
+        return {
+          blob,
+          name: (name || 'image').replace(/\.[^.]+$/, '') + extension,
+        };
+      }
+      if (canvas.width === 1 && canvas.height === 1) {
+        throw new Error('Unable to reduce image below 50 MB.');
+      }
+      const scale = Math.min(0.8, Math.sqrt(maxBytes / blob.size) * 0.9);
+      canvas.width = Math.max(1, Math.floor(canvas.width * scale));
+      canvas.height = Math.max(1, Math.floor(canvas.height * scale));
+    }
+  } finally {
+    canvas.width = canvas.height = 0;
+    image.removeAttribute('src');
+    URL.revokeObjectURL(imageUrl);
+  }
 }
