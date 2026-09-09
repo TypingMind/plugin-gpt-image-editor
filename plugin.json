@@ -2,10 +2,10 @@
   "id": "gpt_image_editor",
   "uuid": "8c66a60b-54a7-40c4-a373-930dcb88b920",
   "emoji": "🖼️",
-  "title": "GPT Image Editor",
+  "title": "GPT Image 2.0",
   "iconURL": "https://custom.typingmind.com/assets/plugins/gpt-image-editor.webp",
   "createdAt": "2025-04-24T00:03:25.285Z",
-  "githubURL": "https://github.com/TypingMind/plugin-dall-e-3",
+  "githubURL": "https://github.com/TypingMind/plugin-gpt-image-editor",
   "openaiSpec": {
     "name": "gpt_image_editor",
     "parameters": {
