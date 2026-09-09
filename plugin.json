@@ -41,7 +41,7 @@
         "gpt-image-2.5-flare",
         "gpt-image-2.5-sunburst"
       ],
-      "defaultValue": "ggpt-image-2.5-flare",
+      "defaultValue": "gpt-image-2.5-flare",
       "description": "Optional, default: \"gpt-image-2.5-flare\""
     },
     {
