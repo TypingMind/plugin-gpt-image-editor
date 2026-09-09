@@ -4,7 +4,7 @@ async function gpt_image_editor(params, userSettings, authorizedResources) {
   const quality = userSettings.quality || 'auto';
   const resolution = userSettings.resolution || 'auto';
   const background = userSettings.background || 'auto';
-  const model = userSettings.model || 'gpt-image-2';
+  const model = userSettings.model || 'gpt-image-2.5-flare';
 
   if (!openaikey) {
     throw new Error(
